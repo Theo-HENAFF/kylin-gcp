@@ -17,8 +17,8 @@
 
 set -euxo pipefail
 
-readonly HBASE_FILE='hbase-1.3.3-bin'
-readonly HBASE_LINK="https://www-us.apache.org/dist/hbase/1.3.3/${HBASE_FILE}.tar.gz"
+readonly HBASE_FILE='hbase-1.3.5-bin'
+readonly HBASE_LINK="https://www-us.apache.org/dist/hbase/1.3.5/${HBASE_FILE}.tar.gz"
 readonly HBASE_SHA_SUM="${HBASE_LINK}.sha512"
 readonly HBASE_HOME='/etc/hbase'
 readonly CLUSTER_NAME="$(/usr/share/google/get_metadata_value attributes/dataproc-cluster-name)"
@@ -37,7 +37,7 @@ function install_and_configure_hbase() {
   if [[ -d "${HBASE_HOME}" ]]; then
     mv "${HBASE_HOME}" "${HBASE_HOME}_old"
   fi
-  mv hbase-1.3.3 "${HBASE_HOME}"
+  mv hbase-1.3.5 "${HBASE_HOME}"
 
   echo 'export PATH=/etc/hbase/bin:${PATH}' >> /etc/profile
 

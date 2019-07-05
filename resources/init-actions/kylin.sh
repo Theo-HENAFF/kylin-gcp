@@ -4,8 +4,8 @@
 
 set -euxo pipefail
 
-readonly KYLIN_VERSION=2.6.0
-readonly KYLIN_FILE=apache-kylin-${KYLIN_VERSION}-bin
+readonly KYLIN_VERSION=2.6.2
+readonly KYLIN_FILE=apache-kylin-${KYLIN_VERSION}-bin-hbase1x
 readonly KYLIN_URL="http://mirror.csclub.uwaterloo.ca/apache/kylin/apache-kylin-${KYLIN_VERSION}/apache-kylin-${KYLIN_VERSION}-bin-hbase1x.tar.gz"
 readonly KYLIN_HOME='/etc/kylin'
 
