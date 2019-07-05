@@ -2,53 +2,51 @@
 This project demonstrates the use of [Apache Kylin](http://kylin.apache.org/) on
 [GCP](https://cloud.google.com/gcp/) backed by [Dataproc](https://cloud.google.com/dataproc/).
 
+Forked project from muvaki : [muvaki kylin-gcp](https://github.com/muvaki/kylin-gcp/)
+
 ## Prerequisites
 To get started you will need a GCP project, to create one see [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-This demo uses [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html)
-along with [GCP provider](https://www.terraform.io/docs/providers/google/index.html)
-tool which can be installed on your machine directly or via docker accessed via [docker](https://hub.docker.com/r/hashicorp/terraform/tags). The demo can also
-be run from [cloud shell](https://cloud.google.com/shell/).
 
-## Demo
+This demo uses only cloud shell command not terraform as initial project.
+
+HBase version used : 1.3.5
+
+Kylin version used : 2.6.2
+
+[link for Apache Kylin version](https://mirror.csclub.uwaterloo.ca/apache/kylin/)
+
+[link for HBase version](https://www-us.apache.org/dist/hbase/)
+
+If the version I used are no longer available on those links, change the value in `/init-actions/hbase.sh` or `/init-actions/kylin.sh` by one of the available one in links above.
+
+## Preparation for the cluster creation
+
+To create the GCS bucket using the cloud shell :
+```sh
+gsutil mb -c regional -l REGION gs://BUCKET_NAME-res-bucket
+```
+I used `europe-west1` as `REGION`. Be aware that everybody can have access to your bucket so don't hesitate to name it randomly to make it harder for others.
+
+
+Go to your cluster you just created in GCS and drag and drop the `init-actions` folder (and its content)
+
 
 ### Create Hadoop/Kylin cluster
-The Terraform components assume that a GCP project exists from which to deploy
-the Kylin cluster. It also assumes the existence of GCP bucket in order to store
-terraform state, also known as [backends](https://www.terraform.io/docs/backends/index.html)
-in Terraform. If you do not wish to use the included [GCS backend configuration](https://www.terraform.io/docs/backends/types/gcs.html)
-simply comment-out the following in the `gcp.tf` file (note: backend configuration
-cannot be populated by TF-variables as of v0.11.11):
+
+To create the GCP dataproc cluster :
+```sh
+export bucket_name=YOUR_BUCKET_NAME
+gcloud dataproc clusters create "kylin-cluster" \
+	--region "europe-west1" \
+	--zone "europe-west1-d" \
+	--num-masters=1 \
+	--num-workers=2 \
+	--master-machine-type=n1-standard-2 \
+	--worker-machine-type=n1-standard-1 \
+	--bucket=$bucket_name \
+	--initialization-actions "gs://$bucket_name/init-actions/hbase.sh,gs://$bucket_name/init-actions/kylin.sh,gs://$bucket_name/init-actions/hive-hcatalog.sh"
 ```
-# comment this out to store Terraform state locally
-# otherwise, enter the name of the ops-bucket in this configuration
-terraform {
-  backend "gcs" {
-    bucket  = "<OPS_BUCKET_NAME>"
-    prefix  = "terraform/state/kylin"
-  }
-}
-```
-The `kylin.tf` file contains the deployment configuration for the Kylin cluster.
-To deploy it, first provide deployment info via environment variables (note: you
-may elect to use a different method of providing TF-variables, see [here](https://www.terraform.io/docs/configuration/variables.html)):
-```
-# ID of existing project to deploy too
-export GOOGLE_PROJECT="<YOUR_PROJECT>"
-# name of resource bucket (created by deployment)
-export TF_VAR_resource_bucket="${GOOGLE_PROJECT}"
-# master node for shell access to dataproc cluster
-export MASTER='kylin-m-2'
-```
-Now that the deployments have the parameters, verify the deployment plan using:
-```
-terraform init # only required once
-terraform plan
-```
-and deploy using:
-```
-terraform apply
-# use "-auto-approve" to skip prompt
-```
+
 If successful, the deployment will deploy a resource bucket and upload the
 necessary `init-scripts`, then create the Kylin cluster.
 
@@ -160,8 +158,9 @@ interface, for more see the [Kylin Docs](http://kylin.apache.org/docs/tutorial/c
 
 ## Cleanup
 Deleting the Kylin cluster and associated resources:
-```
-terraform destroy #(yes at prompt)
+```sh
+gcloud dataproc clusters delete CLUSTER_NAME \
+gsutil rm -r gs://BUCKET_NAME
 ```
 OR delete the project entirely to ensure no other resources are incurring costs.
 
