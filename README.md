@@ -44,7 +44,7 @@ gcloud dataproc clusters create "kylin-cluster" \
 	--master-machine-type=n1-standard-2 \
 	--worker-machine-type=n1-standard-1 \
 	--bucket=$bucket_name \
-	--initialization-actions "gs://$bucket_name/init-actions/hbase.sh,gs://$bucket_name/init-actions/kylin.sh,gs://$bucket_name/init-actions/hive-hcatalog.sh"
+	--initialization-actions "gs://$bucket_name/init-actions/hbase.sh,gs://$bucket_name/init-actions/kylin.sh,gs://$bucket_name/init-actions/hive-hcatalog.sh,,gs://$bucket_name/init-actions/hue.sh"
 ```
 
 If successful, the deployment will deploy a resource bucket and upload the
