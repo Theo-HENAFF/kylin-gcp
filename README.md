@@ -1,4 +1,7 @@
-# Kylin on GCP
+# Kylin on GCP with shell command only
+
+This demo uses only cloud shell command, not terraform as initial project.
+
 This project demonstrates the use of [Apache Kylin](http://kylin.apache.org/) on
 [GCP](https://cloud.google.com/gcp/) backed by [Dataproc](https://cloud.google.com/dataproc/).
 
@@ -6,8 +9,6 @@ Forked project from muvaki : [muvaki kylin-gcp](https://github.com/muvaki/kylin-
 
 ## Prerequisites
 To get started you will need a GCP project, to create one see [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-
-This demo uses only cloud shell command not terraform as initial project.
 
 HBase version used : 1.3.5
 
